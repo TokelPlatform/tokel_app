@@ -9,7 +9,7 @@
     "tsc": "cross-env NODE_ENV=development ./node_modules/.bin/tsc",
     "checks": "concurrently 'yarn lint' 'yarn test' 'yarn tsc'",
     "postinstall": "node -r @babel/register ./config/scripts/CheckNativeDep.js && electron-builder install-app-deps && yarn cross-env NODE_ENV=development webpack --config ./config/webpack/webpack.config.renderer.dev.dll.babel.js && yarn-deduplicate yarn.lock",
-    "start": "NODE_ENV=production node -r @babel/register ./config/scripts/CheckPortInUse.js && cross-env yarn start:renderer",
+    "start": "NODE_ENV=production env-cmd -f env/electron-publish.env node -r @babel/register ./config/scripts/CheckPortInUse.js && cross-env yarn start:renderer",
     "dev": "NODE_ENV=development node -r @babel/register ./config/scripts/CheckPortInUse.js && cross-env yarn start:renderer",
     "start:main": "cross-env NODE_ENV=development electron -r ./config/scripts/BabelRegister ./src/electron/main.ts",
     "start:renderer": "cross-env NODE_ENV=development webpack serve --config ./config/webpack/webpack.config.renderer.dev.babel.js",
@@ -27,12 +27,18 @@
     "publish": "yarn build && electron-builder -mlw --x64 --arm64 --publish always"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["cross-env NODE_ENV=development eslint --cache"],
+    "*.{js,jsx,ts,tsx}": [
+      "cross-env NODE_ENV=development eslint --cache"
+    ],
     "{*.json,.{babelrc,eslintrc,prettierrc}}": [
       "prettier --ignore-path .eslintignore --parser json --write"
     ],
-    "*.{css,scss}": ["prettier --ignore-path .eslintignore --single-quote --write"],
-    "*.{html,md,yml}": ["prettier --ignore-path .eslintignore --single-quote --write"]
+    "*.{css,scss}": [
+      "prettier --ignore-path .eslintignore --single-quote --write"
+    ],
+    "*.{html,md,yml}": [
+      "prettier --ignore-path .eslintignore --single-quote --write"
+    ]
   },
   "build": {
     "productName": "TokelPlatform",
@@ -65,7 +71,10 @@
     },
     "afterSign": "config/scripts/Notarize.js",
     "mac": {
-      "target": ["dmg", "zip"],
+      "target": [
+        "dmg",
+        "zip"
+      ],
       "type": "distribution",
       "hardenedRuntime": true,
       "entitlements": "assets/entitlements.mac.plist",
@@ -89,11 +98,15 @@
     },
     "win": {
       "icon": "icon.ico",
-      "target": ["nsis"]
+      "target": [
+        "nsis"
+      ]
     },
     "linux": {
       "icon": "icon.png",
-      "target": ["AppImage"],
+      "target": [
+        "AppImage"
+      ],
       "category": "Development"
     }
   },
@@ -111,7 +124,15 @@
   "bugs": {
     "url": "https://github.com/TokelPlatform/tokel_app/issues"
   },
-  "keywords": ["tokel", "komodo", "nftmarketplace", "dex", "token", "wallet", "crypto"],
+  "keywords": [
+    "tokel",
+    "komodo",
+    "nftmarketplace",
+    "dex",
+    "token",
+    "wallet",
+    "crypto"
+  ],
   "homepage": "https://github.com/TokelPlatform/tokel_app#readme",
   "jest": {
     "testURL": "http://localhost/",
@@ -127,10 +148,23 @@
       "^util/(.*)$": "<rootDir>/src/util/$1",
       "^vars/(.*)$": "<rootDir>/src/vars/$1"
     },
-    "moduleFileExtensions": ["js", "jsx", "ts", "tsx", "json"],
-    "moduleDirectories": ["node_modules", "src/node_modules"],
-    "setupFiles": ["./config/scripts/CheckBuildsExist.js"],
-    "transformIgnorePatterns": ["node_modules/?!(minidenticon)"]
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "ts",
+      "tsx",
+      "json"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "src/node_modules"
+    ],
+    "setupFiles": [
+      "./config/scripts/CheckBuildsExist.js"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/?!(minidenticon)"
+    ]
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -164,6 +198,7 @@
     "@types/enzyme-adapter-react-16": "^1.0.6",
     "@types/history": "4.7.6",
     "@types/jest": "^26.0.15",
+    "@types/lodash-es": "^4.17.4",
     "@types/node": "14.14.10",
     "@types/react": "^16.9.44",
     "@types/react-dom": "^16.9.9",
@@ -188,10 +223,11 @@
     "electron": "^12.0.4",
     "electron-builder": "^22.10.5",
     "electron-debug": "3.2.0",
-    "electron-devtools-installer": "^3.1.1",
+    "electron-devtools-installer": "^3.2.0",
     "electron-log": "^4.2.4",
     "electron-notarize": "^1.0.0",
     "electron-rebuild": "^2.3.2",
+    "env-cmd": "^10.1.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.3",
     "enzyme-to-json": "^3.5.0",
@@ -240,6 +276,8 @@
     "@emotion/styled": "11.1.5",
     "@rematch/core": "^2.0.1",
     "@rematch/persist": "^2.0.1",
+    "@svgr/webpack": "^5.5.0",
+    "@tippyjs/react": "^4.2.5",
     "caniuse-lite": "^1.0.30001214",
     "dot-prop-immutable": "2.1.0",
     "electron-unhandled": "3.0.2",
@@ -248,6 +286,7 @@
     "got": "11.8.2",
     "history": "^5.0.0",
     "html-react-parser": "1.2.5",
+    "lodash-es": "^4.17.21",
     "minidenticons": "0.1.8",
     "qrcode.react": "1.0.1",
     "react": "^17.0.1",
@@ -267,8 +306,12 @@
   },
   "browserslist": [],
   "renovate": {
-    "extends": ["bliss"],
-    "baseBranches": ["next"]
+    "extends": [
+      "bliss"
+    ],
+    "baseBranches": [
+      "next"
+    ]
   },
   "husky": {
     "hooks": {

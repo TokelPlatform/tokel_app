@@ -44,10 +44,10 @@ const LoginForm = ({ addNewWallet }: LoginFormProps) => {
   const [feedback, setFeedback] = useState('');
   const [showSpinner, setShowSpinner] = useState(false);
 
-  const handleKeyDown = useCallback(
-    e => e.key === 'Enter' && dispatch.account.login({ key: loginValue, setError, setFeedback }),
-    [loginValue, setError]
-  );
+  const performLogin = useCallback(() => {
+    setShowSpinner(true);
+    dispatch.account.login({ key: loginValue, setError, setFeedback });
+  }, [loginValue]);
 
   useEffect(() => {
     if (error) {
@@ -63,21 +63,14 @@ const LoginForm = ({ addNewWallet }: LoginFormProps) => {
       <Input
         autoFocus
         onChange={e => setloginValue(e.target.value)}
-        onKeyDown={handleKeyDown}
+        onKeyDown={e => e.key === 'Enter' && performLogin()}
         icon={password}
         value={loginValue}
         placeholder="Key or Seed Phrase"
         disabled={showSpinner}
       />
       <VSpaceSmall />
-      <Button
-        onClick={() => {
-          setShowSpinner(true);
-          dispatch.account.login({ key: loginValue, setError, setFeedback });
-        }}
-        theme="purple"
-        disabled={showSpinner}
-      >
+      <Button onClick={performLogin} theme="purple" disabled={showSpinner}>
         Login
       </Button>
       <VSpaceMed />
